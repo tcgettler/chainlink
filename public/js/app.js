@@ -2,6 +2,8 @@ const tmdbKey = "84df723bbc5b72154016efb7f91e2d66";
 
 
 const array = ['#one!', '#two!', '#three!', '#four!', '#five!', '#six!', '#seve!', '#eight!', '#nine!', '#ten!', '#eleven!', '#twelve', '#thirteen!', '#fourteen!', '#fifteen!', '#sixteen!', '#seventeen!', '#eighteen!', '#ninteeen!', '#twenty!']
+/******************************************************************Functions to get and display Movies ********************************************************************************/
+/*************** Movie Ajax Calls ***********************/
 const trendingMovies = function(){
     $.ajax({
         url: `https://api.themoviedb.org/3/trending/movie/day?api_key=${tmdbKey}`,
@@ -9,36 +11,43 @@ const trendingMovies = function(){
     }).then(function(response){
         renderTrendingMovies(response);
     })
-}
-
-const trendingGames = function(){
-    $.ajax({
-        url: "https://api-endpoint.igdb.com/games/?fields=name,cover,popularity&order=popularity:desc&limit=20",
-        method: 'GET' ,
-        headers: {"user-key": "65ec884781b32d0dc590af290f28723b", "Accept": "application/json"}
-  }).then(function(response) {
-    renderTrendingGames(response);
-  })
-  .catch(function(err){
-    console.log("error", err);
-  });
 };
 
+const getComingSoon = function(){
+    $.ajax({
+        url: `https://api.themoviedb.org/3/movie/upcoming?api_key=84df723bbc5b72154016efb7f91e2d66&language=en-US&page=1&region=us`,
+        method: 'GET'
+    }).then(function(response){
+        renderComingSoon(response);
+    })
+};
+
+const getMovieInfo = function(id){
+    console.log(id);
+    $.ajax({
+        url: `https://api.themoviedb.org/3/movie/${id}?api_key=${tmdbKey}`,
+        method: 'GET'
+    }).then(function(response){
+        renderMoreInfo(response);
+    });
+};
+
+const getMovieSearch = function(search){
+    $.ajax({
+        url: `https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&language=en-US&query=${search}&page=1&include_adult=false`,
+        method: 'GET'
+    }).then(function(response){
+        
+    })
+};
+/*********************** End of movie ajax calls ***************************************/
+/*********************** Render Movie calls ********************************************/
 const renderTrendingMovies = function(data){
     for (let i = 0; i< data.results.length; i++){
         $('#moviesList').append(`<a class="carousel-item" href="${array[i]}"><img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/${data.results[i].poster_path}"><button class="information" id=${data.results[i].id}><i class="material-icons circle info">info</i> </button></a>`);
     }
     $('#moviesList').carousel();
-}
-const renderTrendingGames = function(data){
-    for (let i = 0; i< data.length; i++){
-        if (data[i].cover){
-            $('#gamesList').append(`<a class="carousel-item" href="${array[i]}"><img src="https://images.igdb.com/igdb/image/upload/t_cover_small/${data[i].cover.cloudinary_id}.png"><button class="information" id=${data[i].id}><i class="material-icons circle info">info</i> </button></a>`);
-        }
-    }
-    $('#gamesList').carousel();
-
-}
+};
 
 const renderComingSoon = function(data){
     $('#modal1Header').empty();
@@ -51,26 +60,7 @@ const renderComingSoon = function(data){
                                     </div>`)
     }
    $('#modal1').modal('open');
-}
-
-const getComingSoon = function(){
-    $.ajax({
-        url: `https://api.themoviedb.org/3/movie/upcoming?api_key=84df723bbc5b72154016efb7f91e2d66&language=en-US&page=1&region=us`,
-        method: 'GET'
-    }).then(function(response){
-        renderComingSoon(response);
-    })
-}
-
-const getMovieInfo = function(id){
-    console.log(id);
-    $.ajax({
-        url: `https://api.themoviedb.org/3/movie/${id}?api_key=${tmdbKey}`,
-        method: 'GET'
-    }).then(function(response){
-        renderMoreInfo(response);
-    });
-}
+};
 
 const renderMoreInfo = function(data){
     console.log(data);
@@ -92,8 +82,38 @@ const renderMoreInfo = function(data){
     $('#modal2Content').append('</div>')
 
     $('#modal2').modal('open');
-}
+};
 
+/********************************End of render calls ***********************************/
+/********************************************************************End of functions to get and display Movies ************************************************************************/
+
+/********************************************************************Funcations to get and display Games *******************************************************************************/
+/****************** Video Game Ajax calls ***************************/
+const trendingGames = function(){
+    $.ajax({
+        url: "https://api-endpoint.igdb.com/games/?fields=name,cover,popularity&order=popularity:desc&limit=20",
+        method: 'GET' ,
+        headers: {"user-key": "65ec884781b32d0dc590af290f28723b", "Accept": "application/json"}
+  }).then(function(response) {
+    renderTrendingGames(response);
+  })
+  .catch(function(err){
+    console.log("error", err);
+  });
+};
+/***************** End of video game ajax calls ***************************/
+/***************** Start of Video Game render calls ***************************/
+const renderTrendingGames = function(data){
+    for (let i = 0; i< data.length; i++){
+        if (data[i].cover){
+            $('#gamesList').append(`<a class="carousel-item" href="${array[i]}"><img src="https://images.igdb.com/igdb/image/upload/t_cover_small/${data[i].cover.cloudinary_id}.png"><button class="information" id=${data[i].id}><i class="material-icons circle info">info</i> </button></a>`);
+        }
+    }
+    $('#gamesList').carousel();
+
+};
+/******************** End of video game render calls **************************/
+/***********************************************************************End of functions to get and display games ************************************************************************/
 const renderSearchModal = function(){
     $('#modal1Header').empty();
     $('#modalContent').empty();
@@ -111,17 +131,11 @@ const renderSearchModal = function(){
                                     </form>
                                     </div>`)
     $('#modal1').modal('open');
-}
+};
 
-const getMovieSearch = function(search){
-    $.ajax({
-        url: `https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&language=en-US&query=${search}&page=1&include_adult=false`,
-        method: 'GET'
-    }).then(function(response){
-        
-    })
-}
 
+
+/******************************************************* Start of user sign-in functions ************************************************/
 const submitNewUser = function(newUser){
     $.ajax({
         url: '/api/newUser',
@@ -141,7 +155,63 @@ const prepareForm = function(){
     submitNewUser(newUser);
 };
 
-
+$('#signup').validate({
+    onkeyup:false,
+    rules: {
+        username: {
+            required: true,
+            minlength: 5//,
+            // remote: {
+            //     url: `/register/isUsernameAvailable/${$('#username').val().trim()}`,
+            //     type: 'get'
+            // }
+        },
+        email: {
+            required: true,
+            email:true
+        },
+        password: {
+            required: true,
+            minlength: 5
+        },
+        confirmpassword: {
+            required: true,
+            minlength: 5,
+            equalTo: "#password"
+        },//For custom messages
+    },
+    messages: {
+        username:{
+            required: "Enter a username",
+            minlength: "Enter at least 5 characters",
+            remote: 'Username already exists'
+        },
+        email: {
+            required: "Enter an e-mail address",
+            email: "Enter a valid e-mail address"
+        },
+        password: {
+            required: "Please enter a password",
+            minlength: "Password must be at least 5 characters"
+        },
+        confirmpassword: {
+            equalTo: 'Passwords do not match'
+        },
+    },
+    errorElement : 'div',
+    errorPlacement: function(error, element) {
+        var placement = $(element).data('error');
+        if (placement) {
+            $(placement).append(error)
+        } else {
+            error.insertAfter(element);
+        }
+    },
+    submitHandler: function(form) {
+        prepareForm();
+    }
+});
+/**********************************************************End of user signin functions ***********************************************************/
 /**********************************************************Start of interactive functions *********************************************************/
 $(document).ready(function(){
     trendingMovies();
@@ -233,61 +303,6 @@ $('#loginSubmit').on('click', function(event){
     })
 })
 
-$('#signup').validate({
-    onkeyup:false,
-    rules: {
-        username: {
-            required: true,
-            minlength: 5//,
-            // remote: {
-            //     url: `/register/isUsernameAvailable/${$('#username').val().trim()}`,
-            //     type: 'get'
-            // }
-        },
-        email: {
-            required: true,
-            email:true
-        },
-        password: {
-            required: true,
-            minlength: 5
-        },
-        confirmpassword: {
-            required: true,
-            minlength: 5,
-            equalTo: "#password"
-        },//For custom messages
-    },
-    messages: {
-        username:{
-            required: "Enter a username",
-            minlength: "Enter at least 5 characters",
-            remote: 'Username already exists'
-        },
-        email: {
-            required: "Enter an e-mail address",
-            email: "Enter a valid e-mail address"
-        },
-        password: {
-            required: "Please enter a password",
-            minlength: "Password must be at least 5 characters"
-        },
-        confirmpassword: {
-            equalTo: 'Passwords do not match'
-        },
-    },
-    errorElement : 'div',
-    errorPlacement: function(error, element) {
-        var placement = $(element).data('error');
-        if (placement) {
-            $(placement).append(error)
-        } else {
-            error.insertAfter(element);
-        }
-    },
-    submitHandler: function(form) {
-        prepareForm();
-    }
-});
+
 
 
