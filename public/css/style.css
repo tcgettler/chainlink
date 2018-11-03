@@ -1,8 +1,9 @@
+
 body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-  
+    background-color: #3235b6;
   }
 
   main {
@@ -20,7 +21,7 @@ body {
     position:absolute;
     top:0;
     left: -100vw;
-    background-color:#FFFFFE;
+    background-color:#377db0;
     height:100vh;
     width:100vw;
     z-index:2;
@@ -30,7 +31,7 @@ body {
     position:absolute;
     top:0;
     right:-100vw;
-    background-color: #FFFFFE;
+    background-color: #5e39ab;
     height:100vh;
     width:100vw;
     z-index:2;
@@ -61,3 +62,143 @@ footer{
 .sortable-handler {
   touch-action: none;
 }
+
+.carousel{
+    height: 43vh;
+}
+.title{
+    font-family: 'Orbitron';
+    font-size: 2em;
+    margin-top: 5%;
+    margin-left: 6%;
+    margin-bottom: 3%;
+    color: white;
+}
+
+.category{
+    position: absolute;
+    font-family: 'Orbitron';
+    font-size: 1.5em;
+    color: white;
+    bottom: 2%;
+    left: 0;
+    right: 0;
+}
+
+.information{
+    position: absolute;
+    right: -10%;
+    top: -10%;
+    background: none;
+    color: #e53935;
+    border: none;
+}
+
+.info{
+    background-color: white;
+    font-size: 3.5em;
+}
+
+.indent{
+    border-style: outset none inset none;
+}
+
+#indentMovie{
+    background-color: #0b6685;
+}
+
+#indentGames{
+    background-color:#370b87;
+}
+
+.carousel .carousel-item {
+    top: -12%;
+}
+
+.coverArt{
+    position:relative;
+}
+
+.informationModal{
+    position: absolute;
+    right: -5%;
+    top: -12%;
+    background: none;
+    color: #e53935;
+    border: none;
+    z-index: 10;
+}
+
+.coverart{
+    height:10vh;
+    width:auto;
+}
+
+.infoModal {
+    background-color:white;
+    font-size:1.5em;
+}
+
+#overview{
+    width: auto;
+    height: 18vh;
+    float: left;
+    margin-right: 10%;
+}
+
+.search{
+    margin-top:8%;
+}
+
+#loginPage{
+    height:100vh;
+}
+
+/* label color */
+.input-field label {
+    color:#FFFF;
+  }
+  /* label focus color */
+  .input-field input[type=text]:focus + label {
+    color: #FFFF;
+    border-bottom: 1px solid #FFF;
+  }
+  /* label underline focus color */
+  .input-field input[type=text]:focus {
+    border-bottom: 1px solid #FFF;
+    box-shadow: 0 1px 0 0 #FFF;
+    color:#fff
+  }
+  /* valid color */
+  .input-field input[type=text].valid {
+    border-bottom: 1px solid #FFF;
+    box-shadow: 0 1px 0 0 #FFF;
+    color:#fff;
+  }
+  /* invalid color */
+  .input-field input[type=text].invalid {
+    border-bottom: 1px solid #FFF;
+    box-shadow: 0 1px 0 0 #FFF;
+    color: #ffff
+  }
+  /* icon prefix focus color */
+  .input-field .prefix.active {
+    color: #FFF;
+  }
+
+  .loginLink{
+      color:white;
+  }
+
+  [type="checkbox"]+span:not(.lever):before, [type="checkbox"]:not(.filled-in)+span:not(.lever):after {
+    border: 2px solid #FFF;
+  }
+
+  [type="checkbox"]:checked+span:not(.lever):before{
+    border-right: 2px solid #e53935;
+    border-bottom: 2px solid #e53935;
+  }
+
+  .error{
+      color:#e53935;
+  }

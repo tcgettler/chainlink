@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes){
-    const Products = sequelize.define('Product', {
+    const User = sequelize.define('User', {
         username: {
             type: DataTypes.STRING
         },
@@ -9,9 +9,13 @@ module.exports = function(sequelize, DataTypes){
         email: {
             type: DataTypes.STRING
         },
+        profile_image: {
+            type: DataTypes.STRING,
+            defaultValue: 'media/defaultprofile.png'
+        }
     });
 
-    return Products;
+    return User;
 };
 
 
