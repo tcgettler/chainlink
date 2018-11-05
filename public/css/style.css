@@ -3,7 +3,7 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
-    background-color: #3235b6;
+    background-color: #43469f;
   }
 
   main {
@@ -202,3 +202,7 @@ footer{
   .error{
       color:#e53935;
   }
+
+#movieSearch{
+    color:black;
+}

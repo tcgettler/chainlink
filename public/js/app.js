@@ -1,6 +1,5 @@
 const tmdbKey = "84df723bbc5b72154016efb7f91e2d66";
 
-
 const array = ['#one!', '#two!', '#three!', '#four!', '#five!', '#six!', '#seve!', '#eight!', '#nine!', '#ten!', '#eleven!', '#twelve', '#thirteen!', '#fourteen!', '#fifteen!', '#sixteen!', '#seventeen!', '#eighteen!', '#ninteeen!', '#twenty!']
 /******************************************************************Functions to get and display Movies ********************************************************************************/
 /*************** Movie Ajax Calls ***********************/
@@ -23,7 +22,6 @@ const getComingSoon = function(){
 };
 
 const getMovieInfo = function(id){
-    console.log(id);
     $.ajax({
         url: `https://api.themoviedb.org/3/movie/${id}?api_key=${tmdbKey}`,
         method: 'GET'
@@ -37,9 +35,69 @@ const getMovieSearch = function(search){
         url: `https://api.themoviedb.org/3/search/movie?api_key=${tmdbKey}&language=en-US&query=${search}&page=1&include_adult=false`,
         method: 'GET'
     }).then(function(response){
-        
+        renderSearchResults(response);
     })
 };
+
+const addInterestToInventory = function(id, owned){ 
+    let user = "";
+    let opposite ="";
+    if (owned === "Interested") {
+        opposite = "Owned";
+    } else {
+        opposite = "Interested";
+    }
+    $.ajax({
+        url: '/login',
+        method: 'GET'
+    }).then(function(response){
+        user = response.id;
+        $.ajax({
+        url: `https://api.themoviedb.org/3/movie/${id}?api_key=${tmdbKey}`,
+        method: 'GET'
+        }).then(function(res){
+        $.ajax({
+            url:`/api/checkInventory/`,
+            method: 'GET',
+            data: {
+                user: user,
+                mediaID: res.id,
+                owned: owned
+            }
+        }).then(function(checked){
+            console.log(checked);
+            if (checked === null){
+                console.log(owned);
+                const newInventory = {
+                    type: 'Movie',
+                    mediaID: res.id,
+                    coverArt: `https://image.tmdb.org/t/p/w300_and_h450_bestv2/${res.poster_path}`,
+                    owned: owned,
+                    userId: user
+                };
+                addToInventoryDB(newInventory);
+            } else if (checked.owned === opposite) {
+                const updateInventory = {
+                    UserId: user,
+                    mediaID: res.id,
+                    owned: owned
+                }
+                $.ajax({
+                    url: '/api/updateInventory',
+                    method: 'PUT',
+                    data: updateInventory
+                }).then(function(updated){
+                    if (updated.success = "success"){
+                        M.toast({html: 'Entry updated'});
+                    }
+                });
+            } else {
+                return;
+            };
+        }); 
+        });   
+    });
+}
 /*********************** End of movie ajax calls ***************************************/
 /*********************** Render Movie calls ********************************************/
 const renderTrendingMovies = function(data){
@@ -58,12 +116,29 @@ const renderComingSoon = function(data){
                                         <img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/${data.results[i].poster_path}" max-width="100%" max-height="100%" class="coverart" >
                                         <button class="informationModal" id="${data.results[i].id}"><i class="material-icons circle infoModal">info</i> </button>
                                     </div>`)
-    }
+    };
    $('#modal1').modal('open');
 };
 
+const renderSearchResults = function(data){
+    $('#modalContent').empty();
+    $('#modalContent').append(`<div class="row">
+                                    <h6>Search Results:</h6>
+                                </div>`)
+    for (let i=0; i<data.results.length; i++){
+        $('#modalContent').append(`<div class="col s4 coverArt"> 
+                                        <img src="https://image.tmdb.org/t/p/w300_and_h450_bestv2/${data.results[i].poster_path}" max-width="100%" max-height="100%" class="coverart" >
+                                        <button class="informationModal" id="${data.results[i].id}"><i class="material-icons circle infoModal">info</i> </button>
+                                    </div>`)
+    }
+   $('#modal1').modal('open');
+};
 const renderMoreInfo = function(data){
-    console.log(data);
+    const genre = [];
+    for (let i = 0; i < data.genres.length; i++){
+        genre.push(data.genres[i].name);
+    };
+    const genreDisplay = genre.join();
     $('#modal2Header').empty();
     $('#modal2Content').empty();
     $('#modal2Header').append(`<h5>${data.original_title}</h5><hr>`)
@@ -71,16 +146,23 @@ const renderMoreInfo = function(data){
                                     <img class="img" id="overview" src="https://image.tmdb.org/t/p/w300_and_h450_bestv2${data.poster_path}">
                                     <span class="flow-text">${data.overview}</span>
                                 </div>
-                                <div class="col s12">
-                                    <h6 class="left">Release Date:</h6> ${data.release_date}
-                                </div>
-                                <div class="col s12">
-                                    <h6 class="left">Genres:</h6>`);
-    for (let i=0; i < data.genres.length; i++){
-        $('#modal2Content').append(`${data.genres[i].name},`);
-    }
-    $('#modal2Content').append('</div>')
-
+                                <table class="col s12">
+                                    <tbody>
+                                        <tr>
+                                            <td><h6 class="left">Release Date: </h6></td>
+                                            <td><h6>${data.release_date}</h6></td>
+                                        </tr>
+                                        <tr>
+                                            <td><h6 class="left">Genres: </h6></td>
+                                            <td><h6 class="left">${genreDisplay}</h6></td>
+                                        </tr>
+                                        <tr>
+                                            <td><a href="#!" class="waves-effect waves-light btn-small interested" id="${data.id}">Interested</a></td>
+                                            <td><a href="#!" class="waves-effect waves-light btn-small owned" id="${data.id}">Owned</a></td>
+                                        </tr>
+                                    </tbody
+                                </table>
+                            `);
     $('#modal2').modal('open');
 };
 
@@ -122,12 +204,10 @@ const renderSearchModal = function(){
                                     <div class="row">
                                         <div class="input-field col s8">
                                             <i class="material-icons prefix">search</i>
-                                        <input id="movieSearch" type="text" class="validate">
-                                        <label for="icon_prefix">Search</label>
+                                        <input id="movieSearch" type="text" class="validate" placeholder="Search">
                                         </div>
-                                        
+                                        <a class="waves-effect waves-light btn-small col s4 search" id="search">Search</a>
                                     </div>
-                                    <a class="waves-effect waves-light btn-small col s4 search" id="search">Search</a>
                                     </form>
                                     </div>`)
     $('#modal1').modal('open');
@@ -160,11 +240,7 @@ $('#signup').validate({
     rules: {
         username: {
             required: true,
-            minlength: 5//,
-            // remote: {
-            //     url: `/register/isUsernameAvailable/${$('#username').val().trim()}`,
-            //     type: 'get'
-            // }
+            minlength: 5,
         },
         email: {
             required: true,
@@ -184,7 +260,7 @@ $('#signup').validate({
         username:{
             required: "Enter a username",
             minlength: "Enter at least 5 characters",
-            remote: 'Username already exists'
+            unique: "Username already exists"
         },
         email: {
             required: "Enter an e-mail address",
@@ -286,6 +362,11 @@ $('#searchMovies').on('click', function(event){
     renderSearchModal();
 })
 
+$('#searchGames').on('click', function(event){
+    event.preventDefault;
+    renderSearchModal();
+})
+
 $('#modalHeader').on('click', '#search', function(event){
     event.preventDefault;
     getMovieSearch($('#movieSearch').val().trim());
@@ -299,10 +380,37 @@ $('#loginSubmit').on('click', function(event){
         method: 'POST',
         data: login
     }).then(function(response){
-        console.log(response);
+        if(response.success){
+            window.location.replace("/linkster");
+        }
+    }).catch(function(err){
+        M.toast({html: "Invalid Username/Password"});
     })
 })
 
+$('#modal2Content').on('click', '.interested', function(event){
+    event.preventDefault;
+    addInterestToInventory($(this).attr('id'), "Interested");
+});
 
+$('#modal2Content').on('click', '.owned', function(event){
+    event.preventDefault;
+    addInterestToInventory($(this).attr('id'), "Owned");
+})
+const addToInventoryDB = function(newInventory){
+    $.ajax({
+        url: '/inventory/addNew',
+        method: 'POST',
+        data: newInventory
+    }).then(function(response){
+        if (response.success === true){
+            M.toast({html: 'Added to Inventory'});
+        }
+    })
+};
 
+$('#modal1Header').on('click', '#search', function(event){
+    event.preventDefault;
+    getMovieSearch($('#movieSearch').val().trim());
+});
 

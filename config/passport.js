@@ -1,26 +1,64 @@
-const db = ('../models');
 const bcrypt = require('bcrypt');
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = function(passport, user){
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    var isValidPassword = function(userpass, pass) {
- 
-        return bCrypt.compareSync(pass, userpass);
-     
-    };
-    db.User.find({where: { username: username }}, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
+  let User = user;
+  passport.serializeUser(function (user, done) {
+    console.log("serialize")
+    done(null, user.id);
+  });
+
+
+  passport.deserializeUser(function(id, done) {
+    User.findById(id).then(function(user) {
+      if(user){
+        done(null, user.get());
       }
-      if (!isValidPassword(user.password, password)) {
-        return done(null, false, { message: 'Incorrect password.' });
+      else{
+        done(user.errors,null);
       }
-      return done(null, user);
     });
-  }
-));
+
+}); 
+  //LOCAL SIGNIN
+  passport.use('local-signin', new LocalStrategy(
+    
+    {
+    passReqToCallback : true // allows us to pass back the entire request to the callback
+    },
+  
+    function(req, username, password, done) {
+  
+      var User = user;
+  
+      var isValidPassword = function(userpass,password){
+        return bcrypt.compareSync(password, userpass);
+      }
+  
+      User.findOne({ where : { username: username}}).then(function (user) {
+        if (!user) {
+          return done(null, false, { message: 'Email does not exist' });
+        }
+  
+        if (!isValidPassword(user.password,password)) {
+  
+          return done(null, false, { message: 'Incorrect password.' });
+  
+        }
+  
+        var userinfo = user.get();
+        console.log("On to the next one");
+        return done(null,userinfo);
+  
+      }).catch(function(err){
+  
+        console.log("Error:",err);
+  
+        return done(null, false, { message: 'Something went wrong with your Signin' });
+  
+  
+      });
+  
+    }
+    ));
 };
