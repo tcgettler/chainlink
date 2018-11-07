@@ -617,7 +617,7 @@ const getCurrentUser = function(){
 
 const renderProfile = function(data){
     $('#profile').prepend(`<div class="container"><div class="col s8 center">
-                                    <img src="${data.profile_image}" class="responsive-img userProfileImage">
+                                    <img src="${data.profile_image}" class="responsive-img circle userProfileImage">
                                 </div>
                                 <div class="col s12 center">
                                     <h3 class="userLogged">${data.username}</h3>

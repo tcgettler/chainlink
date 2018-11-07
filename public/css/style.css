@@ -267,3 +267,28 @@ input.valid:not([type]), input.valid:not([type]):focus, input.valid[type="text"]
     font-family: 'Orbitron';
     color:white;
 }
+
+@media only screen and (min-width: 900px){
+	#profile{
+        height:100vh;
+        width:33vw;
+    }
+
+    #movie{
+        height:100vh;
+        width:33vw;
+        left:0;
+        border-right: outset;
+    }
+    
+    #games{
+        height:100vh;
+        width:33vw;
+        right:0;
+        border-left: inset;
+    }
+
+    .userProfileImage{
+        margin-top:35%;
+    }
+}
