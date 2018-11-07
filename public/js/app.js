@@ -515,7 +515,7 @@ const getFriendList = function(){
 
 const searchUserList = function(search){
     $.ajax({
-        url: `/api/users/${search}`,
+        url: `/api/friend/${search}`,
         method: 'GET'
     }).then(function(response){
         renderFriends(response);
@@ -582,7 +582,6 @@ const renderFriendSearch = function(){
 }
 
 const renderFriendList = function(data){
-    console.log(data);
     $('#modal1Header').empty();
     $('#modalContent').empty();
     $('#modal1Header').append('<div class="container"><h4>Friend List:</h4></div>')
@@ -590,8 +589,8 @@ const renderFriendList = function(data){
         $('#modalContent').append(`<div class="row">
                                         <div class="col s2"><img src="${data[i].profileImage}" class="responsive-img"></div>
                                         <div class="col s6 center"><h6>${data[i].username}</h6></div>
-                                        <div class="col s2"><a class="btn-floating waves-effect waves-light checkFriendInventory" id="${data[i].username}"><i class="material-icons">work</i></a></div>
-                                        <div class="col s2"><a class="btn-floating waves-effect waves-light removeFriendConfirm" id="${data[i].username}"><i class="material-icons">remove_circle</i></a></div>
+                                        <div class="col s2"><a class="btn-floating waves-effect waves-light checkFriendInventory red darken-1" id="${data[i].id}"><i class="material-icons">work</i></a></div>
+                                        <div class="col s2"><a class="btn-floating waves-effect waves-light removeFriendConfirm red darken-4" id="${data[i].id}"><i class="material-icons">remove_circle</i></a></div>
                                     </div>`)
     };
     $('#modal1').modal('open');
@@ -600,9 +599,9 @@ const renderFriendList = function(data){
 const renderFriends = function(data){
     $('#modalContent').empty();
     $('#modalContent').append(`<div class="row">
-                                    <div class="col s2"><img src="${data.profile_image}" class="responsive-img"></div>
-                                    <div class="col s8"><h6>${data.username}</h6></div>
-                                    <div class="col s1"><a class="btn-floating waves-effect waves-light addFriend red darken-1" id="${data.username}"><i class="material-icons">add_circle_outline</i></a></div>
+                                    <div class="col s2"><img src="${data[0].profile_image}" class="responsive-img"></div>
+                                    <div class="col s8"><h6>${data[0].username}</h6></div>
+                                    <div class="col s1"><a class="btn-floating waves-effect waves-light addFriend red darken-1" id="${data[0].id}"><i class="material-icons">add_circle_outline</i></a></div>
                                 </div>`)
     
 }
@@ -618,10 +617,10 @@ const getCurrentUser = function(){
 
 const renderProfile = function(data){
     $('#profile').prepend(`<div class="container"><div class="col s8 center">
-                                    <img src="${data.profile_image}" class="responsive-img">
+                                    <img src="${data.profile_image}" class="responsive-img userProfileImage">
                                 </div>
                                 <div class="col s12 center">
-                                    <h3>${data.username}</h3>
+                                    <h3 class="userLogged">${data.username}</h3>
                                 </div></div>`);
 };
 
@@ -675,6 +674,8 @@ const renderOptions = function(){
 const renderInviteRequest = function(){
     $('#modal1Header').empty();
     $('#modalContent').empty();
+    $('.inviteList').empty();
+    $('.friendList').empty();
     let user = ""
     $.ajax({
         url: '/login',
@@ -689,7 +690,7 @@ const renderInviteRequest = function(){
                 $('.friendList').append(`<div class="chip">
                                                 <img src="${response[i].profileImage}" alt="Contact Person">
                                                 ${response[i].username}
-                                                <a class="waves-effect waves-light btn-float addInvite" id="${response[i].id}"><i class="material-icons right">add</i></a>
+                                                <a class="waves-effect waves-light btn-float addInvite" id="${response[i].username}"><i class="material-icons right">add</i></a>
                                             </div>`)
             }
             $('#modal3').modal('open');
@@ -701,26 +702,26 @@ const addtoInvite = function(search){
     $('#inviteList').empty();
     $('#friendList').empty();
     $.ajax({
-        url: `/api/users/${search}`,
+        url: `/api/friend/${search}`,
         method: 'GET'
     }).then(function(response){
         $('.inviteList').append(`<div class="chip">
-                                    <img src="${response.profile_image}" alt="Contact Person">
-                                    ${response.username}
-                                    <a class="waves-effect waves-light btn-float removeInvite" id="${response.id}"><i class="material-icons right">remove</i></a>
+                                    <img src="${response[0].profile_image}" alt="Contact Person">
+                                    ${response[0].username}
+                                    <a class="waves-effect waves-light btn-float removeInvite" id="${response[0].id}"><i class="material-icons right">remove</i></a>
                                  </div>`);
     });
 };
 
 const removeFromInvite = function(search){
     $.ajax({
-        url: `/api/users/${search}`,
+        url: `/api/friend/${search}`,
         method: 'GET'
     }).then(function(response){
         $('.friendList').append(`<div class="chip">
-                                    <img src="${response.profile_image}" alt="Contact Person">
-                                    ${response.username}
-                                    <a class="waves-effect waves-light btn-float addInvite" id="${response.id}"><i class="material-icons right">add</i></a>
+                                    <img src="${response[0].profile_image}" alt="Contact Person">
+                                    ${response[0].username}
+                                    <a class="waves-effect waves-light btn-float addInvite" id="${response[0].id}"><i class="material-icons right">add</i></a>
                                  </div>`);
     });
 };
@@ -728,30 +729,53 @@ const removeFromInvite = function(search){
 const getInvited = function(){
     const invited = [];
     $('.removeInvite').each(function(){
-        console.log($(this).attr('id'));
         invited.push($(this).attr('id'));
     });
-    createInviteEntry(invited);
+    $.ajax({
+        url: '/login',
+        method: 'GET'
+    }).then(function(userres){
+        invited.push(userres.id);
+        createInviteEntry(invited);
+    });
 };
 
 const createInviteEntry = function(invited){
-    const newEvent = {
-        name: $('#event_name').val().trim(),
-        date: $('#date').val(),
-        invited: invited
-    }
-    $.ajax({
-        url: '/api/newInvite/',
-        method: 'POST',
-        data: newEvent
-    }).then(function(response){
-        if (response.success === "success"){
-            M.toast({html: 'Invite Created'});
-            $('#event_name').val('');
-            $('#date').val('');
+    for(let i = 0; i < invited.length; i++){
+        const newEvent = {
+            name: $('#event_name').val().trim(),
+            date: $('#date').val(),
+            UserId: invited[i]
         }
+        $.ajax({
+            url: '/api/newInvite/',
+            method: 'POST',
+            data: newEvent
+        }).then(function(response){
+            if (response.success === "success"){
+            }
+        });
+    };
+    $('#event_name').val('');
+    $('#date').val('');
+}
+
+const getInvitations = function(){
+    $.ajax({
+        url: '/login',
+        method: 'GET'
+    }).then(function(user){
+        $.ajax({
+            url: `/api/invites/${user.id}`,
+            method: 'GET'
+        }).then(function(response){
+            $('#modal1Header').append(`<div class="container"><h6>Invitations:</h6></div>`)
+            for (let i = 0; i < response.length; i ++){
+                $('#modalContent').append(`<div class="col s6 center">${response[i].name}</div><div class="col s6 center">${response[i].date}`)
+            }
+            $('#modal1').modal('open');
+        })
     });
-    
 }
 /**********************************************************Start of interactive functions *********************************************************/
 $(document).ready(function(){
@@ -909,7 +933,7 @@ $('.addFriends').on('click', function(event){
     renderFriendSearch();
 });
 
-$('#friendList').on('click', function(event){
+$('#friends').on('click', function(event){
     event.preventDefault;
     getFriendList();
 });
@@ -941,6 +965,17 @@ $('#modalContent').on('click', '.checkFriendInventory', function(event){
         method: 'GET'
     }).then(function(response){
         getInventory(response.id);
+    });
+});
+
+$('#modalContent').on('click', '.removeFriendConfirm', function(event){
+    event.preventDefault;
+    $.ajax({
+        url: `/api/friendList/${$(this).attr('id')}`,
+        method: 'DELETE'
+    }).then(function(response){
+        if(response.success = "success")
+        M.toast({html: 'Friend Removed'})
     });
 });
 
@@ -984,4 +1019,9 @@ $('.inviteList').on('click', '.removeInvite', function(event){
 $('.createInvite').on('click', function(event){
     event.preventDefault;
     getInvited();
+})
+
+$('.viewInvites').on('click', function(event){
+    event.preventDefault;
+    getInvitations();
 })

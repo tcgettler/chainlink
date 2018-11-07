@@ -4,12 +4,12 @@ module.exports = function(sequelize, DataTypes){
             type: DataTypes.STRING,
         },
         date: {
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
         }
     });
 
     Invite.associate = function(models) {
-        Invite.hasMany(models.User, {
+        Invite.belongsTo(models.User, {
           onDelete: 'cascade'
         });  
     };

@@ -76,11 +76,25 @@ module.exports = function (app) {
         res.json(response);
       });
   })
+  app.get('/api/friend/:user', function(req, res){
+    db.User.findAll({ where: {username: req.params.user}})
+    .then(function(response){
+      console.log(response);
+        res.json(response);
+    });
 
+  });
   app.get('/api/friendList/:user', function(req, res){
     db.Friends.findAll({ where: {UserId: parseInt(req.params.user)}})
     .then(function(response){
         res.json(response);
+    });
+  });
+
+  app.delete('/api/friendList/:user', function(req, res){
+    db.Friends.destroy({ where: {id: parseInt(req.params.user)}})
+    .then(function(){
+        res.json({success:'success'});
     });
   });
 
@@ -115,13 +129,18 @@ module.exports = function (app) {
 
   app.post('/api/newInvite/', function(req, res){
     db.Invite.create({
-      name: req.body.event_name,
-      data: req.body.date,
+      name: req.body.name,
+      date: req.body.date,
+      UserId: parseInt(req.body.UserId)
     }).then(function(){
       res.json({ success: 'success'});
     });
   });
-  
 
-
+  app.get('/api/invites/:user', function(req, res){
+    db.Invite.findAll({ where: {UserId: parseInt(req.params.user)}})
+      .then(function(response){
+        res.json(response);
+      });
+  })
 };

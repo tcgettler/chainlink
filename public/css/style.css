@@ -258,3 +258,12 @@ input.valid:not([type]), input.valid:not([type]):focus, input.valid[type="text"]
 #date{
     color:black;
 }
+
+.userProfileImage{
+    margin-top:3%;
+}
+
+.userLogged{
+    font-family: 'Orbitron';
+    color:white;
+}
