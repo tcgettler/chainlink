@@ -121,7 +121,7 @@ footer{
 
 .informationModal{
     position: absolute;
-    right: -5%;
+    right: 2%;
     top: -12%;
     background: none;
     color: #e53935;
@@ -204,5 +204,57 @@ footer{
   }
 
 #movieSearch{
+    color:black;
+}
+
+#gamecoverart{
+    position:relative;
+    margin-bottom: 2%;
+}
+
+.options{
+    position: absolute;
+    top: 1%;
+    right:2%;
+    color: white;
+}
+
+.gameInfo{
+    position: absolute;
+    right: -5%;
+    top: -12%;
+    background: none;
+    color: #e53935;
+    border: none;
+    z-index: 10;  
+}
+
+.infocard{
+    margin-bottom:10%;
+}
+
+.friendList{
+    overflow-y:auto;
+}
+
+.inviteList{
+    overflow-y:auto;
+}
+
+#friendSearch{
+    color:black;
+}
+
+input.valid:not([type]), input.valid:not([type]):focus, input.valid[type="text"]:not(.browser-default), input[type="text"]:not(.browser-default):focus:not([readonly]), input.valid[type="text"]:not(.browser-default):focus, input.valid[type="password"]:not(.browser-default), input.valid[type="password"]:not(.browser-default):focus, input.valid[type="email"]:not(.browser-default), input.valid[type="email"]:not(.browser-default):focus, input.valid[type="url"]:not(.browser-default), input.valid[type="url"]:not(.browser-default):focus, input.valid[type="time"]:not(.browser-default), input.valid[type="time"]:not(.browser-default):focus, input.valid[type="date"]:not(.browser-default), input.valid[type="date"]:not(.browser-default):focus, input.valid[type="datetime"]:not(.browser-default), input.valid[type="datetime"]:not(.browser-default):focus, input.valid[type="datetime-local"]:not(.browser-default), input.valid[type="datetime-local"]:not(.browser-default):focus, input.valid[type="tel"]:not(.browser-default), input.valid[type="tel"]:not(.browser-default):focus, input.valid[type="number"]:not(.browser-default), input.valid[type="number"]:not(.browser-default):focus, input.valid[type="search"]:not(.browser-default), input.valid[type="search"]:not(.browser-default):focus, textarea.materialize-textarea.valid, textarea.materialize-textarea.valid:focus, .select-wrapper.valid > input.select-dropdown {
+    border-bottom: 1px solid #e53935;
+    -webkit-box-shadow: 0 1px 0 0 #e53935;
+    box-shadow: 0 1px 0 0 #e53935;
+}
+
+#event_name{
+    color:black;
+}
+
+#date{
     color:black;
 }

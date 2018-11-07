@@ -37,25 +37,50 @@
                 </div>
                 <div class="modal-footer">
                     <div class="container">
-                        <a href="#!" class="waves-effect waves-light btn-small">Create Invitation</a>
+                        <a href="#!" class="waves-effect waves-light btn-small createInvitation">Create Invitation</a>
                     </div>    
                 </div>
             </div>
+            <div id="modal3" class="modal modal-fixed-footer">
+                <div class="modal-header" id="modal1Header">
+                    <h6>Invitation:</h6>
+                </div>
+                    <div class="row" id="modalContent">
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <input placeholder="Event Name" id="event_name" type="text" class="validate">
+                                </div>
+                                <div class="input-field col s6">
+                                    <input placeholder="Date" id="date" type="date" class="validate">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s8 friendList"><h6>Friend List:</h6></div>
+                            </div>      
+                            <div class="row"><div class="col s8 inviteList"><h6>Invited List</h6></div></div>
+                        </form>
+                </div>
+                <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat createInvite">Create Invitation</a>
+                </div>
+            </div>
             <main id="page">
+                    
                     <div class="container" id="profile">
-                        
+                        <a class="waves-effect waves-light btn-float options"><i class="material-icons small">settings</i></a>
                         <div class="row center-align" id="menu">
                             <div class="col s12">
-                                <a class="waves-effect waves-light btn-large red darken-1 activity"><i class="material-icons left">announcement</i>Activity</a>
+                                <a class="waves-effect waves-light btn-large red darken-1 addFriends"><i class="material-icons left">person_add</i>Add Friends</a>
                             </div>
                             <div class="col s12">
-                                <a class="waves-effect waves-light btn-large red darken-1"><i class="material-icons left">insert_invitation</i>Invites</a>
+                                <a class="waves-effect waves-light btn-large red darken-1"><i class="material-icons left">insert_invitation</i>View Invites</a>
                             </div>
                             <div class="col s12">
-                                <a class="waves-effect waves-light btn-large red darken-1"><i class="material-icons left">group</i>Friends</a>
+                                <a class="waves-effect waves-light btn-large red darken-1" id="friendList"><i class="material-icons left">group</i>Friends</a>
                             </div>
                             <div class="col s12">
-                                <a class="waves-effect waves-light btn-large red darken-1"><i class="material-icons left">work</i>Inventory</a>
+                                <a class="waves-effect waves-light btn-large red darken-1" id="inventory"><i class="material-icons left">work</i>Inventory</a>
                             </div>
                         </div>
                         <div class="row"> 
@@ -79,7 +104,7 @@
                         <a class="waves-effect waves-light btn-large red darken-1" id="searchMovies"><i class="material-icons left">search</i>Search Movies</a>
                     </div>
                     <div class="col s12">
-                        <a class="waves-effect waves-light btn-large red darken-1"><i class="material-icons left">insert_invitation</i>Invite</a>
+                        <a class="waves-effect waves-light btn-large red darken-1 createInvitation"><i class="material-icons left">insert_invitation</i>Create Invititation</a>
                     </div>
                   </div>
                   <div class="category center-align">Movies</div>
@@ -100,7 +125,7 @@
                           <a class="waves-effect waves-light btn-large red darken-1" id="searchGames"><i class="material-icons left">search</i>Search Video Games</a>
                       </div>
                       <div class="col s12">
-                          <a class="waves-effect waves-light btn-large red darken-1" id="gInvites"><i class="material-icons left">insert_invitation</i>Invite</a>
+                          <a class="waves-effect waves-light btn-large red darken-1 createInvitation" id="gInvites"><i class="material-icons left">insert_invitation</i>Create Invitation</a>
                       </div>
                     </div>
                     <div class="category center-align">Video Games</div>
