@@ -2,7 +2,7 @@ const db = require('../models');
 const bcrypt = require('bcrypt');
 const passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy;
-const keys= require('../config/config');
+const keys= require('../config/hiddenkeys');
 
 module.exports = function (app) {
   app.get('/api/keys/:key', function(req, res){
