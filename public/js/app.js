@@ -424,6 +424,31 @@ const renderGameSearchModal = function(){
 
 
 /******************************************************* Start of user sign-in functions ************************************************/
+$('#loginSubmit').on('click', function(event){
+    event.preventDefault;
+    const login = {username: $('#username').val().trim(), password: $('#password').val()};
+    $.ajax({
+        url: '/login',
+        method: 'POST',
+        data: login
+    }).then(function(response){
+        if(response.success){
+            window.location.replace("/linkster");
+        }
+    }).catch(function(err){
+        M.toast({html: "Invalid Username/Password"});
+    })
+});
+
+const getCurrentUser = function(){
+    $.ajax({
+        url: '/login',
+        method: 'GET'
+    }).then(function(response){
+        renderProfile(response);
+    })   
+}
+
 const submitNewUser = function(newUser){
     $.ajax({
         url: '/api/newUser',
@@ -495,8 +520,18 @@ $('#signup').validate({
         prepareForm();
     }
 });
+
+const renderProfile = function(data){
+    $('#profile').prepend(`<div class="container"><div class="col s8 center">
+                                    <img src="${data.profile_image}" class="responsive-img circle userProfileImage">
+                                </div>
+                                <div class="col s12 center">
+                                    <h3 class="userLogged">${data.username}</h3>
+                                </div></div>`);
+};
 /**********************************************************End of user signin functions ***********************************************************/
 /**********************************************************Start of Friend List Functions ********************************************************/
+/******************************************* Friend list api calls *******************************************/
 const getFriendList = function(){
     let user = ""
     $.ajax({
@@ -564,7 +599,8 @@ const addFriend = function(search){
         });
     });
 }
-
+/************************************End of friend api calls **************************************/
+/**************************************Start of friend renders**************************************/
 const renderFriendSearch = function(){
     $('#modal1Header').empty();
     $('#modalContent').empty();
@@ -605,24 +641,10 @@ const renderFriends = function(data){
                                 </div>`)
     
 }
+/************************************* End of friend list renders ******************************************/
+/*****************************************End of friend list functions *************************************/
+/*******************************************Start of Inventory functions *************************************/
 
-const getCurrentUser = function(){
-    $.ajax({
-        url: '/login',
-        method: 'GET'
-    }).then(function(response){
-        renderProfile(response);
-    })   
-}
-
-const renderProfile = function(data){
-    $('#profile').prepend(`<div class="container"><div class="col s8 center">
-                                    <img src="${data.profile_image}" class="responsive-img circle userProfileImage">
-                                </div>
-                                <div class="col s12 center">
-                                    <h3 class="userLogged">${data.username}</h3>
-                                </div></div>`);
-};
 
 const getInventory = function(user){
     $.ajax({
@@ -631,6 +653,18 @@ const getInventory = function(user){
     }).then(function(response){
         renderInventory(response);
     });
+};
+
+const addToInventoryDB = function(newInventory){
+    $.ajax({
+        url: '/inventory/addNew',
+        method: 'POST',
+        data: newInventory
+    }).then(function(response){
+        if (response.success === true){
+            M.toast({html: 'Added to Inventory'});
+        }
+    })
 };
 
 const renderInventory = function(data){
@@ -670,7 +704,8 @@ const renderOptions = function(){
                                 <a class="waves-effect waves-light btn-large red darken-1" id="signOut"><i class="material-icons left">error_outline</i>Sign Out</a>`)
     $('#modal1').modal('open');
 }
-
+/******************************************* End of Inventory functions**********************************************/
+/********************************************Start of Invitation functions *********************************************/
 const renderInviteRequest = function(){
     $('#modal1Header').empty();
     $('#modalContent').empty();
@@ -777,7 +812,10 @@ const getInvitations = function(){
         })
     });
 }
+/***************************************************End of Invitation functions **********************************************/
 /**********************************************************Start of interactive functions *********************************************************/
+
+/*******************************Document interactions *****************************/
 $(document).ready(function(){
     trendingMovies();
     trendingGames();
@@ -834,98 +872,17 @@ $('#movie').on('swipeleft', function(event){
     })
 })
 
-$('#mComingSoon').on('click', function(event){
-    event.preventDefault;
-    getComingSoon();
-})
+/************************************End of document interactions *************************************/
 
-$('#modalContent').on('click', '.informationModal', function(event){
+/********************************* Profile buttons *******************************************/
+$('.options').on('click', function(event){
     event.preventDefault;
-    getMovieInfo($(this).attr('id'));
-})
-
-$('#moviesList').on('click', '.information', function(event){
-    event.preventDefault;
-    getMovieInfo($(this).attr('id'));
-})
-
-$('#searchMovies').on('click', function(event){
-    event.preventDefault;
-    renderSearchModal();
-})
-
-$('#searchGames').on('click', function(event){
-    event.preventDefault;
-    renderGameSearchModal();
-})
-
-$('#modalHeader').on('click', '#search', function(event){
-    console.log('test')
-    event.preventDefault;
-    getMovieSearch($('#movieSearch').val().trim());
-})
-
-$('#loginSubmit').on('click', function(event){
-    event.preventDefault;
-    const login = {username: $('#username').val().trim(), password: $('#password').val()};
-    $.ajax({
-        url: '/login',
-        method: 'POST',
-        data: login
-    }).then(function(response){
-        if(response.success){
-            window.location.replace("/linkster");
-        }
-    }).catch(function(err){
-        M.toast({html: "Invalid Username/Password"});
-    })
-})
-
-$('#modal2Content').on('click', '.interested', function(event){
-    event.preventDefault;
-    addInterestToInventory($(this).attr('id'), "Interested");
+    renderOptions();
 });
 
-$('#modal2Content').on('click', '.owned', function(event){
+$('#modalContent').on('click', '#signOut', function(event){
     event.preventDefault;
-    addInterestToInventory($(this).attr('id'), "Owned");
-});
-
-$('#modal2Content').on('click', '.gameowned', function(event){
-    event.preventDefault;
-    addGameInterestToInventory($(this).attr('id'), "Owned")
-});
-
-$('#modal2Content').on('click', '.gameinterested', function(event){
-    event.preventDefault;
-    addGameInterestToInventory($(this).attr('id'), "Interested");
-});
-
-const addToInventoryDB = function(newInventory){
-    $.ajax({
-        url: '/inventory/addNew',
-        method: 'POST',
-        data: newInventory
-    }).then(function(response){
-        if (response.success === true){
-            M.toast({html: 'Added to Inventory'});
-        }
-    })
-};
-
-$('#modal1Header').on('click', '#Search', function(event){
-    event.preventDefault;
-    getMovieSearch($('#movieSearch').val().trim());
-});
-
-$('#modal1Header').on('click', '#gSearch', function(event){
-    event.preventDefault;
-    getGameSearch($('#gameSearch').val().trim());
-});
-
-$('#gComingSoon').on('click', function(event){
-    event.preventDefault;
-    getGameSoon();
+    window.location.replace("/");
 });
 
 $('.addFriends').on('click', function(event){
@@ -979,30 +936,12 @@ $('#modalContent').on('click', '.removeFriendConfirm', function(event){
     });
 });
 
-$('#modalContent').on('click', '.gameInfo', function(event){
-    event.preventDefault;
-    getGameInfo($(this).attr('id'));
-});
 
-$('#gamesList').on('click', '.gameInfo', function(event){
-    event.preventDefault;
-    getGameInfo($(this).attr('id'));
-});
-
-$('.options').on('click', function(event){
-    event.preventDefault;
-    renderOptions();
-});
-
-$('#modalContent').on('click', '#signOut', function(event){
-    event.preventDefault;
-    window.location.replace("/");
-})
 
 $('.createInvitation').on('click', function(event){
     event.preventDefault;
     renderInviteRequest();
-})
+});
 
 $('.friendList').on('click', '.addInvite', function(event){
     event.preventDefault;
@@ -1019,9 +958,110 @@ $('.inviteList').on('click', '.removeInvite', function(event){
 $('.createInvite').on('click', function(event){
     event.preventDefault;
     getInvited();
-})
+});
 
 $('.viewInvites').on('click', function(event){
     event.preventDefault;
     getInvitations();
+});
+
+/********************************End of Profile Buttons ************************************/
+
+/********************************** Movie Buttons ******************************************/
+$('#mComingSoon').on('click', function(event){
+    event.preventDefault;
+    getComingSoon();
 })
+
+$('#modalContent').on('click', '.informationModal', function(event){
+    event.preventDefault;
+    getMovieInfo($(this).attr('id'));
+})
+
+$('#moviesList').on('click', '.information', function(event){
+    event.preventDefault;
+    getMovieInfo($(this).attr('id'));
+})
+
+$('#searchMovies').on('click', function(event){
+    event.preventDefault;
+    renderSearchModal();
+})
+
+$('#modalHeader').on('click', '#search', function(event){
+    console.log('test')
+    event.preventDefault;
+    getMovieSearch($('#movieSearch').val().trim());
+})
+
+$('#modal1Header').on('click', '#Search', function(event){
+    event.preventDefault;
+    getMovieSearch($('#movieSearch').val().trim());
+});
+
+$('#modal2Content').on('click', '.interested', function(event){
+    event.preventDefault;
+    addInterestToInventory($(this).attr('id'), "Interested");
+});
+
+$('#modal2Content').on('click', '.owned', function(event){
+    event.preventDefault;
+    addInterestToInventory($(this).attr('id'), "Owned");
+});
+/************************************End of Movie buttons **********************************/
+
+/************************************Video game buttons ***********************************/
+$('#searchGames').on('click', function(event){
+    event.preventDefault;
+    renderGameSearchModal();
+})
+
+$('#modal2Content').on('click', '.gameowned', function(event){
+    event.preventDefault;
+    addGameInterestToInventory($(this).attr('id'), "Owned")
+});
+
+$('#modal2Content').on('click', '.gameinterested', function(event){
+    event.preventDefault;
+    addGameInterestToInventory($(this).attr('id'), "Interested");
+});
+
+$('#modal1Header').on('click', '#gSearch', function(event){
+    event.preventDefault;
+    getGameSearch($('#gameSearch').val().trim());
+});
+
+$('#gComingSoon').on('click', function(event){
+    event.preventDefault;
+    getGameSoon();
+});
+
+$('#modalContent').on('click', '.gameInfo', function(event){
+    event.preventDefault;
+    getGameInfo($(this).attr('id'));
+});
+
+$('#gamesList').on('click', '.gameInfo', function(event){
+    event.preventDefault;
+    getGameInfo($(this).attr('id'));
+});
+
+/*************************************End of Video Game buttons ***************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

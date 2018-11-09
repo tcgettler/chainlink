@@ -5,6 +5,7 @@ const passport = require('passport'),
 const keys= require('../config/hiddenkeys');
 
 module.exports = function (app) {
+  /************************************Login Routes ********************************/
   app.get('/api/keys/:key', function(req, res){
     if (req.params.key === ":tmdb"){
       res.json({ key: keys.tmdb_key});
@@ -44,6 +45,7 @@ module.exports = function (app) {
       res.json(req.user);
   })
 
+  /******************************** Inventory database routes ******************************/
   app.post('/inventory/addNew', function(req, res) {
       db.Inventory.create({
         type: req.body.type,
@@ -70,6 +72,7 @@ module.exports = function (app) {
       });
   })
 
+  /************************************************* User/Friend List database routes*******************************************/
   app.get('/api/users/:id', function(req,res){
     db.User.find({where: { id: parseInt(req.params.id)}})
       .then(function(response){
